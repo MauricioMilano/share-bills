@@ -14,7 +14,7 @@ services:
 
   frontend:
     build:
-      context: ../splitwise-frontend
+      context: ./frontend
       args:
         VITE_API_URL: "http://backend:4000"
     restart: always
