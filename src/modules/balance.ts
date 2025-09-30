@@ -48,7 +48,7 @@ router.get("/groups/:id/balance", authMiddleware, async (req, res) => {
       balance: balances[u.id] || 0,
     }));
 
-    res.json({ balances: result });
+    res.json(result);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Erro ao calcular balanço do grupo" });

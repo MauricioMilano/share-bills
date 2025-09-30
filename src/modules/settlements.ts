@@ -76,7 +76,7 @@ router.get("/groups/:id/settlements", authMiddleware, async (req, res) => {
       amount: s.amount,
     }));
 
-    res.json({ settlements: result });
+    res.json(result);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Erro ao calcular settlements" });
