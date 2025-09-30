@@ -27,4 +27,4 @@ RUN apk add --no-cache openssl libc6-compat
 COPY --from=backend-build /app /app
 COPY --from=frontend-build /app/frontend/dist /app/dist/public
 EXPOSE 4000
-CMD npx prisma migrate deploy && npm run prisma:seed && node dist/index.js
+CMD npx prisma db push && npm run prisma:seed && node dist/index.js
