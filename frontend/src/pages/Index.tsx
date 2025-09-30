@@ -6,7 +6,7 @@ export default function Index() {
   const [status, setStatus] = useState("");
 
   useEffect(() => {
-    axios.get("/").then((res) => {
+    axios.get("/api/").then((res) => {
       setStatus(res.data.message);
     });
   }, []);

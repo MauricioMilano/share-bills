@@ -16,7 +16,7 @@ export default function Groups() {
 
   const fetchGroups = async () => {
     if (!token) return;
-    const res = await axios.get("/groups", {
+    const res = await axios.get("/api/groups", {
       headers: { Authorization: `Bearer ${token}` },
     });
     setGroups(res.data);

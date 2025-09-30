@@ -15,7 +15,7 @@ export default function Notifications() {
 
   const fetchNotifications = async () => {
     if (!token) return;
-    const res = await axios.get("/notifications", {
+    const res = await axios.get("/api/notifications", {
       headers: { Authorization: `Bearer ${token}` },
     });
     setNotifications(res.data);

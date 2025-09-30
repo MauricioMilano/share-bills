@@ -9,8 +9,10 @@ import groupRoutes from "./modules/groups";
 import expenseRoutes from "./modules/expenses";
 import historyRoutes from "./modules/history";
 import notificationRoutes from "./modules/notifications";
+import balanceRoutes from "./modules/balance";
+import settlementsRoutes from "./modules/settlements";
+import paymentsRoutes from "./modules/payments";
 
-// Load env vars
 dotenv.config();
 
 const app = express();
@@ -19,23 +21,25 @@ const prisma = new PrismaClient();
 app.use(cors());
 app.use(express.json());
 
-// Health check
+// Healthcheck
 app.get("/health", (req, res) => {
   res.json({ status: "ok", message: "Splitwise Backend is running 🚀" });
 });
 
-// Routes
-app.use("/auth", authRoutes);
-app.use("/groups", groupRoutes);
-app.use("/expenses", expenseRoutes);
-app.use("/history", historyRoutes);
-app.use("/notifications", notificationRoutes);
+// Rotas API
+app.use("/api/auth", authRoutes);
+app.use("/api/groups", groupRoutes);
+app.use("/api/expenses", expenseRoutes);
+app.use("/api/history", historyRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api", balanceRoutes);
+app.use("/api", settlementsRoutes);
+app.use("/api", paymentsRoutes);
 
-// Serve frontend build
+// Servir frontend
 const __dirnameResolved = path.resolve();
 app.use(express.static(path.join(__dirnameResolved, "dist/public")));
 
-// React Router fallback
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirnameResolved, "dist/public", "index.html"));
 });
