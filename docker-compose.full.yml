@@ -1,6 +1,9 @@
 services:
-  backend:
-    build: .
+  app:
+    build:
+      context: .
+      args:
+        VITE_API_URL: "http://app:4000"
     restart: always
     environment:
       DATABASE_URL: "file:./dev.db"
@@ -9,17 +12,6 @@ services:
       HOST: 0.0.0.0
     volumes:
       - ./dev.db:/app/dev.db
-    networks:
-      - easy-panel
-
-  frontend:
-    build:
-      context: ./frontend
-      args:
-        VITE_API_URL: "http://backend:4000"
-    restart: always
-    depends_on:
-      - backend
     networks:
       - easy-panel
 

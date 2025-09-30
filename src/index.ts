@@ -1,3 +1,5 @@
+import path from "path";
+import path from "path";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -29,6 +31,14 @@ app.use("/groups", groupRoutes);
 app.use("/expenses", expenseRoutes);
 app.use("/history", historyRoutes);
 app.use("/notifications", notificationRoutes);
+// Serve frontend build
+const __dirnameResolved = path.resolve();
+app.use(express.static(path.join(__dirnameResolved, "dist/public")));
+
+// React Router fallback
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirnameResolved, "dist/public", "index.html"));
+});
 
 const PORT = process.env.PORT || 4000;
 const HOST = process.env.HOST || "0.0.0.0";
