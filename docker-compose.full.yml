@@ -9,8 +9,6 @@ services:
       HOST: 0.0.0.0
     volumes:
       - ./dev.db:/app/dev.db
-    ports:
-      - "4000:4000"
     networks:
       - easy-panel
 
@@ -20,8 +18,6 @@ services:
       args:
         VITE_API_URL: "http://backend:4000"
     restart: always
-    ports:
-      - "3000:80"
     depends_on:
       - backend
     networks:
