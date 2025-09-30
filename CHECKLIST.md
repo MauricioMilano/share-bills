@@ -19,21 +19,21 @@
 - [x] Divisão de despesas (splits)
 - [x] Histórico de transações
 - [x] Notificações básicas
-- [ ] Cálculo automático de saldos por grupo
-- [ ] Exibir “quem deve para quem”
-- [ ] Quitação de dívidas (pagamentos entre usuários)
-- [ ] Convites e papéis em grupos (admin / membro)
-- [ ] Validações e segurança adicionais (tokens expirados, inputs, etc.)
+[x] Cálculo automático de saldos por grupo
+[x] Exibir “quem deve para quem” (rota backend pronta)
+[x] Quitação de dívidas (pagamentos entre usuários, rota backend pronta)
+[x] Convites e papéis em grupos (admin / membro)
+[x] Validações e segurança adicionais (tokens expirados, inputs, etc.)
 
 ## Funcionalidades Frontend
 - [x] Páginas principais (Login, Register, Dashboard, Groups, GroupDetails, History, Notifications)
 - [x] Navegação via React Router
-- [ ] Dashboard com resumo de saldos
-- [ ] Tela de “quem deve para quem”
-- [ ] Exibir histórico consolidado
-- [ ] UI para quitação de dívidas
-- [ ] Gestão de grupos (convites, papéis)
-- [ ] Melhorias de layout para mobile
+[x] Dashboard com resumo de saldos
+[x] Tela de “quem deve para quem” (rota backend e frontend implementadas)
+[x] Exibir histórico consolidado
+[x] UI para quitação de dívidas
+[x] Gestão de grupos (convites, papéis)
+[x] Melhorias de layout para mobile
 
 ## DevOps / Extras
 - [x] Git configurado com GitHub remoto

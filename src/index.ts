@@ -36,6 +36,16 @@ app.use("/api", balanceRoutes);
 app.use("/api", settlementsRoutes);
 app.use("/api", paymentsRoutes);
 
+// Listar todos os usuários (apenas para admin ou debug)
+app.get("/api/users", async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({ select: { id: true, name: true, email: true } });
+    res.json(users);
+  } catch (e) {
+    res.status(500).json({ error: "Erro ao buscar usuários" });
+  }
+});
+
 // Servir frontend
 const __dirnameResolved = path.resolve();
 app.use(express.static(path.join(__dirnameResolved, "dist/public")));

@@ -44,6 +44,15 @@ router.post("/:groupId/members", authMiddleware, async (req: AuthRequest, res) =
     data: { userId, groupId, role: "member" },
   });
 
+  // Criar notificação para o usuário convidado (agora inclui o ID do grupo)
+  const groupInfo = await prisma.group.findUnique({ where: { id: groupId } });
+  await prisma.notification.create({
+    data: {
+      userId,
+      message: `Você foi convidado para o grupo: ${groupInfo?.name}||${groupId}`,
+    },
+  });
+
   res.json(group);
 });
 
@@ -53,6 +62,25 @@ router.delete("/:groupId/members/:memberId", authMiddleware, async (req: AuthReq
 
   await prisma.groupMember.delete({ where: { id: memberId } });
   res.json({ message: "Member removed" });
+});
+
+// Aceitar convite para grupo
+router.post("/:groupId/accept", authMiddleware, async (req: AuthRequest, res) => {
+  const { groupId } = req.params;
+  const userId = req.userId!;
+  try {
+    const member = await prisma.groupMember.findFirst({
+      where: { groupId, userId, status: "PENDING" },
+    });
+    if (!member) return res.status(404).json({ error: "Convite não encontrado ou já aceito." });
+    await prisma.groupMember.update({
+      where: { id: member.id },
+      data: { status: "ACCEPTED" },
+    });
+    res.json({ message: "Convite aceito!" });
+  } catch (e) {
+    res.status(500).json({ error: "Erro ao aceitar convite" });
+  }
 });
 
 export default router;

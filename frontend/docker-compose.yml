@@ -8,5 +8,4 @@ services:
 
 networks:
   default:
-    external:
-      name: easy-panel
+    name: easy-panel

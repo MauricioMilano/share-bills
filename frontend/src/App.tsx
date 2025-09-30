@@ -8,6 +8,9 @@ import History from "./pages/History";
 import Notifications from "./pages/Notifications";
 import Dashboard from "./pages/Dashboard";
 import Navbar from "./components/Navbar";
+import Settlements from "./pages/Settlements";
+import PayDebt from "./pages/PayDebt";
+import Users from "./pages/Users";
 
 function App() {
   return (
@@ -23,6 +26,9 @@ function App() {
           <Route path="/groups/:id" element={<GroupDetails />} />
           <Route path="/history/:groupId" element={<History />} />
           <Route path="/notifications" element={<Notifications />} />
+          <Route path="/groups/:groupId/settlements" element={<Settlements />} />
+          <Route path="/groups/:groupId/pay" element={<PayDebt />} />
+          <Route path="/users" element={<Users />} />
         </Routes>
       </div>
     </div>

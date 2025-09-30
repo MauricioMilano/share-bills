@@ -19,6 +19,9 @@ export default function Navbar() {
           <>
             <Link to="/groups">Groups</Link>
             <Link to="/notifications">Notifications</Link>
+            <Link to="/groups/1/settlements">Quem deve para quem</Link>
+            <Link to="/groups/1/pay">Quitar dívida</Link>
+            <Link to="/users">Usuários</Link>
           </>
         )}
       </div>

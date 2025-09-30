@@ -1,17 +1,20 @@
 const apiUrl = import.meta.env.VITE_API_URL || "";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 interface Group {
   id: string;
   name: string;
   description?: string;
+  members?: { userId: string; status: string }[];
 }
 
 export default function Groups() {
   const [groups, setGroups] = useState<Group[]>([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [acceptMsg, setAcceptMsg] = useState("");
   const token = localStorage.getItem("token");
 
   const fetchGroups = async () => {
@@ -37,6 +40,24 @@ export default function Groups() {
     setName("");
     setDescription("");
     fetchGroups();
+  };
+
+  const acceptInvite = async (groupId: string) => {
+    if (!token) return;
+    try {
+      await axios.post(
+        `/api/groups/${groupId}/accept`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setAcceptMsg("Convite aceito!");
+      fetchGroups();
+      fetchNotifications && fetchNotifications();
+    } catch (err: any) {
+      setAcceptMsg(err.response?.data?.error || "Erro ao aceitar convite");
+    }
   };
 
   return (
@@ -67,18 +88,41 @@ export default function Groups() {
       </form>
 
       <ul className="space-y-2">
-        {groups.map((g) => (
-          <li
-            key={g.id}
-            className="p-4 bg-white shadow rounded flex justify-between"
-          >
-            <div>
-              <h2 className="font-semibold">{g.name}</h2>
-              <p className="text-gray-600 text-sm">{g.description}</p>
-            </div>
-          </li>
-        ))}
+        {groups.map((g) => {
+          // Verifica se o grupo está pendente para o usuário logado
+          const isPending = g.members?.some(
+            (m) => m.userId === JSON.parse(atob(token!.split(".")[1])).userId && m.status === "PENDING"
+          );
+          return (
+            <li
+              key={g.id}
+              className="p-4 bg-white shadow rounded flex justify-between items-center"
+            >
+              <div>
+                <h2 className="font-semibold">{g.name}</h2>
+                <p className="text-gray-600 text-sm">{g.description}</p>
+              </div>
+              <div className="flex gap-2 items-center">
+                <Link
+                  to={`/groups/${g.id}`}
+                  className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700"
+                >
+                  Detalhes
+                </Link>
+                {isPending && (
+                  <button
+                    className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-700"
+                    onClick={() => acceptInvite(g.id)}
+                  >
+                    Aceitar convite
+                  </button>
+                )}
+              </div>
+            </li>
+          );
+        })}
       </ul>
+      {acceptMsg && <p className="mt-4 text-blue-600">{acceptMsg}</p>}
     </div>
   );
 }

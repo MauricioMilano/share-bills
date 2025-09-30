@@ -11,12 +11,30 @@ interface Expense {
   splits: { userId: string; amount: number }[];
 }
 
+interface GroupMember {
+  id: string;
+  userId: string;
+  role: string;
+  status: string;
+  user: { name: string; email: string };
+}
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
 export default function GroupDetails() {
   const { id } = useParams();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [balances, setBalances] = useState<Record<string, number>>({});
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
+  const [members, setMembers] = useState<GroupMember[]>([]);
+  const [inviteUserId, setInviteUserId] = useState("");
+  const [memberMsg, setMemberMsg] = useState("");
+  const [users, setUsers] = useState<User[]>([]);
   const token = localStorage.getItem("token");
 
   const fetchExpenses = async () => {
@@ -32,8 +50,24 @@ export default function GroupDetails() {
     setBalances(bal.data);
   };
 
+  const fetchMembers = async () => {
+    if (!token || !id) return;
+    const res = await axios.get(`/api/groups`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const group = res.data.find((g: any) => g.id === id);
+    setMembers(group?.members || []);
+  };
+
   useEffect(() => {
     fetchExpenses();
+    fetchMembers();
+    // Buscar todos os usuários para o dropdown
+    if (token) {
+      axios
+        .get("/api/users", { headers: { Authorization: `Bearer ${token}` } })
+        .then((res) => setUsers(res.data));
+    }
   }, []);
 
   const addExpense = async (e: React.FormEvent) => {
@@ -52,6 +86,36 @@ export default function GroupDetails() {
     setDescription("");
     setAmount("");
     fetchExpenses();
+  };
+
+  const inviteMember = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!token || !id || !inviteUserId) return;
+    try {
+      await axios.post(
+        `/api/groups/${id}/members`,
+        { userId: inviteUserId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setMemberMsg("Membro convidado!");
+      setInviteUserId("");
+      fetchMembers();
+    } catch (err: any) {
+      setMemberMsg(err.response?.data?.error || "Erro ao convidar membro");
+    }
+  };
+
+  const removeMember = async (memberId: string) => {
+    if (!token || !id) return;
+    try {
+      await axios.delete(`/api/groups/${id}/members/${memberId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setMemberMsg("Membro removido!");
+      fetchMembers();
+    } catch (err: any) {
+      setMemberMsg(err.response?.data?.error || "Erro ao remover membro");
+    }
   };
 
   return (
@@ -96,7 +160,51 @@ export default function GroupDetails() {
       <ul className="space-y-2">
         {Object.entries(balances).map(([userId, balance]) => (
           <li key={userId} className="p-2 bg-gray-100 rounded">
-            {userId}: {balance}
+            {userId}: {typeof balance === "object" ? JSON.stringify(balance) : balance}
+          </li>
+        ))}
+      </ul>
+
+      <h2 className="text-xl font-semibold mb-2 mt-8">Membros do grupo</h2>
+      <form onSubmit={inviteMember} className="mb-4 flex gap-2">
+        <select
+          value={inviteUserId}
+          onChange={e => setInviteUserId(e.target.value)}
+          className="border p-2 rounded w-full"
+        >
+          <option value="">Selecione um usuário para convidar</option>
+          {users.map((u) => (
+            <option key={u.id} value={u.id}>
+              {u.name} ({u.email})
+            </option>
+          ))}
+        </select>
+        <button
+          type="submit"
+          className="bg-green-500 text-white px-4 py-2 rounded"
+        >
+          Convidar
+        </button>
+      </form>
+      {memberMsg && <p className="mb-2 text-blue-600">{memberMsg}</p>}
+      <ul className="space-y-2 mb-6">
+        {members.map((m) => (
+          <li
+            key={m.id}
+            className="p-4 bg-white shadow rounded flex justify-between items-center"
+          >
+            <div>
+              <span className="font-semibold">{m.user ? m.user.name : "Usuário desconhecido"}</span> ({m.user ? m.user.email : "sem email"})
+              <span className="ml-2 text-xs text-gray-500">
+                [{m.role}] [{m.status}]
+              </span>
+            </div>
+            <button
+              className="bg-red-500 text-white px-2 py-1 rounded"
+              onClick={() => removeMember(m.id)}
+            >
+              Remover
+            </button>
           </li>
         ))}
       </ul>
