@@ -1,4 +1,4 @@
-const apiUrl = import.meta.env.VITE_API_URL || "${apiUrl}";
+const apiUrl = import.meta.env.VITE_API_URL || "";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -24,14 +24,14 @@ export default function Dashboard() {
 
     // Fetch groups
     axios
-      .get("${apiUrl}/groups", {
+      .get("/groups", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setGroups(res.data.slice(0, 3)));
 
     // Fetch notifications
     axios
-      .get("${apiUrl}/notifications", {
+      .get("/notifications", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setNotifications(res.data.slice(0, 3)));
@@ -41,7 +41,7 @@ export default function Dashboard() {
       let totalBalances: Record<string, number> = {};
       for (const g of groups) {
         const res = await axios.get(
-          `${apiUrl}/expenses/${g.id}/balances`,
+          `/expenses/${g.id}/balances`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         for (const [uid, bal] of Object.entries(res.data)) {

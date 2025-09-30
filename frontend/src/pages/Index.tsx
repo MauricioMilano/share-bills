@@ -1,4 +1,4 @@
-const apiUrl = import.meta.env.VITE_API_URL || "${apiUrl}";
+const apiUrl = import.meta.env.VITE_API_URL || "";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -6,7 +6,7 @@ export default function Index() {
   const [status, setStatus] = useState("");
 
   useEffect(() => {
-    axios.get("${apiUrl}/").then((res) => {
+    axios.get("/").then((res) => {
       setStatus(res.data.message);
     });
   }, []);

@@ -1,4 +1,4 @@
-const apiUrl = import.meta.env.VITE_API_URL || "${apiUrl}";
+const apiUrl = import.meta.env.VITE_API_URL || "";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -21,12 +21,12 @@ export default function GroupDetails() {
 
   const fetchExpenses = async () => {
     if (!token) return;
-    const res = await axios.get(`${apiUrl}/expenses/${id}`, {
+    const res = await axios.get(`/expenses/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     setExpenses(res.data);
 
-    const bal = await axios.get(`${apiUrl}/expenses/${id}/balances`, {
+    const bal = await axios.get(`/expenses/${id}/balances`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     setBalances(bal.data);
@@ -40,7 +40,7 @@ export default function GroupDetails() {
     e.preventDefault();
     if (!token) return;
     await axios.post(
-      "${apiUrl}/expenses",
+      "/expenses",
       {
         groupId: id,
         description,

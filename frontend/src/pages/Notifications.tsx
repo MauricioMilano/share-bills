@@ -1,4 +1,4 @@
-const apiUrl = import.meta.env.VITE_API_URL || "${apiUrl}";
+const apiUrl = import.meta.env.VITE_API_URL || "";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -15,7 +15,7 @@ export default function Notifications() {
 
   const fetchNotifications = async () => {
     if (!token) return;
-    const res = await axios.get("${apiUrl}/notifications", {
+    const res = await axios.get("/notifications", {
       headers: { Authorization: `Bearer ${token}` },
     });
     setNotifications(res.data);
@@ -24,7 +24,7 @@ export default function Notifications() {
   const markAsRead = async (id: string) => {
     if (!token) return;
     await axios.post(
-      `${apiUrl}/notifications/${id}/read`,
+      `/notifications/${id}/read`,
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );

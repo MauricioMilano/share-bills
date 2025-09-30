@@ -1,4 +1,4 @@
-const apiUrl = import.meta.env.VITE_API_URL || "${apiUrl}";
+const apiUrl = import.meta.env.VITE_API_URL || "";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -19,7 +19,7 @@ export default function History() {
   useEffect(() => {
     if (!token) return;
     axios
-      .get(`${apiUrl}/history/${groupId}`, {
+      .get(`/history/${groupId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setExpenses(res.data));

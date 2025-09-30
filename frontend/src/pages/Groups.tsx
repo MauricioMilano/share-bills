@@ -1,4 +1,4 @@
-const apiUrl = import.meta.env.VITE_API_URL || "${apiUrl}";
+const apiUrl = import.meta.env.VITE_API_URL || "";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -16,7 +16,7 @@ export default function Groups() {
 
   const fetchGroups = async () => {
     if (!token) return;
-    const res = await axios.get("${apiUrl}/groups", {
+    const res = await axios.get("/groups", {
       headers: { Authorization: `Bearer ${token}` },
     });
     setGroups(res.data);
@@ -30,7 +30,7 @@ export default function Groups() {
     e.preventDefault();
     if (!token) return;
     await axios.post(
-      "${apiUrl}/groups",
+      "/groups",
       { name, description },
       { headers: { Authorization: `Bearer ${token}` } }
     );
