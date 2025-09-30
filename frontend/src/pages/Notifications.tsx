@@ -24,7 +24,7 @@ export default function Notifications() {
   const markAsRead = async (id: string) => {
     if (!token) return;
     await axios.post(
-      `/notifications/${id}/read`,
+      `${apiUrl}/api/notifications/${id}/read`,
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );

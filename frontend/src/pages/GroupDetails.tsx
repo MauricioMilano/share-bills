@@ -21,12 +21,12 @@ export default function GroupDetails() {
 
   const fetchExpenses = async () => {
     if (!token) return;
-    const res = await axios.get(`/expenses/${id}`, {
+    const res = await axios.get(`/api/expenses/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     setExpenses(res.data);
 
-    const bal = await axios.get(`/expenses/${id}/balances`, {
+    const bal = await axios.get(`/api/api/groups/${id}/balance`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     setBalances(bal.data);
@@ -40,7 +40,7 @@ export default function GroupDetails() {
     e.preventDefault();
     if (!token) return;
     await axios.post(
-      "/expenses",
+      "/api/expenses",
       {
         groupId: id,
         description,

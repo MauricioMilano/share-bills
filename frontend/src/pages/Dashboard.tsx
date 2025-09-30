@@ -22,28 +22,25 @@ export default function Dashboard() {
   useEffect(() => {
     if (!token) return;
 
+    const headers = { Authorization: `Bearer ${token}` };
+
     // Fetch groups
     axios
-      .get("/groups", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      .get(`${apiUrl}/api/groups`, { headers })
       .then((res) => setGroups(res.data.slice(0, 3)));
 
     // Fetch notifications
     axios
-      .get("/notifications", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      .get(`${apiUrl}/api/notifications`, { headers })
       .then((res) => setNotifications(res.data.slice(0, 3)));
 
     // Fetch balances summary (sum of all balances across groups)
     (async () => {
       let totalBalances: Record<string, number> = {};
       for (const g of groups) {
-        const res = await axios.get(
-          `/expenses/${g.id}/balances`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const res = await axios.get(`${apiUrl}/api/groups/${g.id}/balance`, {
+          headers,
+        });
         for (const [uid, bal] of Object.entries(res.data)) {
           totalBalances[uid] = (totalBalances[uid] || 0) + (bal as number);
         }
