@@ -1,20 +1,19 @@
-# Node.js
-node_modules/
-
-# Build outputs
-dist/
-
-# Environment variables
-.env
+# Node modules
+node_modules
 
 # Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+logs
+*.log
 
-# SQLite database
+# Build outputs
+dist
+
+# Env files
+.env
+
+# Ignore everything in prisma except schema
+prisma/*
+!prisma/schema.prisma
+
+# ✅ Allow committing SQLite database file
 dev.db
-dev.db-journal
-
-# Docker
-postgres_data/
