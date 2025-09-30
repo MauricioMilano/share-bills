@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: splitwise
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - easy-panel
+
+  backend:
+    build: .
+    restart: always
+    environment:
+      DATABASE_URL: postgres://user:password@db:5432/splitwise
+      JWT_SECRET: supersecretkey
+      PORT: 4000
+    ports:
+      - "4000:4000"
+    depends_on:
+      - db
+    networks:
+      - easy-panel
+
+  frontend:
+    build:
+      context: ../splitwise-frontend
+      args:
+        VITE_API_URL: "http://backend:4000"
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - easy-panel
+
+volumes:
+  postgres_data:
+
+networks:
+  easy-panel:
+    external: true
