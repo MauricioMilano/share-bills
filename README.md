@@ -1,27 +1,42 @@
-# 💸 Share Bills (Splitwise Clone)
+# Share Bills (Splitwise Clone)
 
-Aplicação completa para dividir despesas em grupos, inspirada no Splitwise.
+Um clone completo do Splitwise para gerenciar despesas compartilhadas entre amigos, viagens e grupos. Projeto **self-hosted**, com backend em Node.js/Express + Prisma + SQLite, e frontend em React + Vite + Tailwind + shadcn/ui.
+
+---
 
 ## 🚀 Tecnologias
-- **Backend:** Node.js, Express, Prisma, SQLite
-- **Frontend:** React, Vite, TailwindCSS, shadcn/ui
-- **Infra:** Docker + Docker Compose
+- **Backend**: Node.js, Express, Prisma, SQLite
+- **Frontend**: React, Vite, TypeScript, TailwindCSS, shadcn/ui
+- **Auth**: JWT + bcrypt
+- **Infra**: Docker + docker-compose (compatível com EasyPanel)
 
-## 📂 Estrutura
+---
+
+## 📂 Estrutura do Projeto
 ```
 share-bills/
-├── backend/      # API Express + Prisma (SQLite)
-├── frontend/     # React + Vite + Tailwind + shadcn/ui
-└── docker-compose.full.yml  # Sobe frontend + backend juntos
+├── backend/            # API + lógica de negócio
+│   ├── src/            # Código fonte
+│   ├── prisma/         # Schema + migrations + seed
+│   ├── Dockerfile
+│   └── docker-compose.full.yml (backend + frontend + db)
+│
+├── frontend/           # Aplicação React
+│   ├── src/
+│   ├── Dockerfile
+│   └── nginx.conf
+│
+└── README.md
 ```
 
-## 🔧 Desenvolvimento local
+---
+
+## 🔧 Rodando em Desenvolvimento
 ### Backend
 ```bash
 cd backend
 npm install
-npm run prisma:deploy
-npm run prisma:seed
+npx prisma migrate dev --name init
 npm run dev
 ```
 
@@ -31,33 +46,36 @@ cd frontend
 npm install
 npm run dev
 ```
-Acesse em: [http://localhost:5173](http://localhost:5173)
 
-## 🐳 Rodar com Docker Compose (full stack)
+Backend sobe em `http://localhost:4000` e frontend em `http://localhost:5173`.
+
+---
+
+## 🐳 Rodando com Docker (Produção)
+Na pasta `backend`, execute:
 ```bash
-cd backend
 docker-compose -f docker-compose.full.yml up --build
 ```
 
-- Frontend: [http://localhost:3000](http://localhost:3000)
-- Backend: [http://localhost:4000](http://localhost:4000)
+- Backend: http://localhost:4000
+- Frontend: http://localhost:3000
+- Banco: SQLite (`dev.db` dentro do container backend)
 
-## 🔑 Usuário padrão (seed)
+Usuário padrão criado automaticamente:
 - **Email:** `admin@splitwise.local`
 - **Senha:** `admin123`
 
-## 🌐 Variáveis de ambiente
-### Backend (.env)
-```
-DATABASE_URL="file:./dev.db"
-PORT=4000
-JWT_SECRET="supersecretkey"
-```
+---
 
-### Frontend (Docker ARG)
-```
-VITE_API_URL=http://backend:4000
-```
+## 📌 Funcionalidades
+- Autenticação (login/registro com JWT)
+- Grupos (criação, listagem, membros)
+- Despesas (criação, listagem, saldos automáticos)
+- Histórico de transações
+- Notificações (listagem + marcar como lidas)
+- Dashboard com overview
 
 ---
-✅ Projeto pronto para uso no **EasyPanel** com rede `easy-panel`.
+
+## 📜 Licença
+MIT
