@@ -1,29 +1,18 @@
 version: "3.9"
 
 services:
-  db:
-    image: postgres:15
-    restart: always
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: splitwise
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - easy-panel
-
   backend:
     build: .
     restart: always
     environment:
-      DATABASE_URL: postgres://user:password@db:5432/splitwise
+      DATABASE_URL: "file:./dev.db"
       JWT_SECRET: supersecretkey
       PORT: 4000
+      HOST: 0.0.0.0
+    volumes:
+      - ./dev.db:/app/dev.db
     ports:
       - "4000:4000"
-    depends_on:
-      - db
     networks:
       - easy-panel
 
@@ -39,9 +28,6 @@ services:
       - backend
     networks:
       - easy-panel
-
-volumes:
-  postgres_data:
 
 networks:
   easy-panel:
