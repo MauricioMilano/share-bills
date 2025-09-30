@@ -25,4 +25,4 @@ WORKDIR /app
 COPY --from=backend-build /app /app
 COPY --from=frontend-build /app/frontend/dist /app/dist/public
 EXPOSE 4000
-CMD npm run prisma:seed && node dist/index.js
+CMD npm run init-db && node dist/index.js
