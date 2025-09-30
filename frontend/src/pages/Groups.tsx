@@ -30,7 +30,7 @@ export default function Groups() {
     e.preventDefault();
     if (!token) return;
     await axios.post(
-      "/groups",
+      "/api/groups",
       { name, description },
       { headers: { Authorization: `Bearer ${token}` } }
     );
