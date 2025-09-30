@@ -3,8 +3,8 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Instala OpenSSL (compatível com Prisma + Node 20)
-RUN apk add --no-cache openssl
+# Dependências necessárias para Prisma (OpenSSL + compatibilidade glibc)
+RUN apk add --no-cache openssl libc6-compat
 
 COPY package*.json ./
 RUN npm install
