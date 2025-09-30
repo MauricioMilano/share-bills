@@ -26,7 +26,7 @@ export default function GroupDetails() {
     });
     setExpenses(res.data);
 
-    const bal = await axios.get(`/api/api/groups/${id}/balance`, {
+    const bal = await axios.get(`/api/groups/${id}/balance`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     setBalances(bal.data);
