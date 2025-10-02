@@ -28,9 +28,19 @@ router.post("/", authMiddleware, async (req: AuthRequest, res) => {
 router.get("/", authMiddleware, async (req: AuthRequest, res) => {
   const groups = await prisma.group.findMany({
     where: { members: { some: { userId: req.userId! } } },
-    include: { members: true },
+    include: { members: { include: { user: true } } },
   });
-  res.json(groups);
+
+  // Remove password from user objects
+  const groupsWithoutPassword = groups.map(group => ({
+    ...group,
+    members: group.members.map(member => ({
+      ...member,
+      user: member.user ? (({ password, ...rest }) => rest)(member.user) : null
+    }))
+  }));
+
+  res.json(groupsWithoutPassword);
 });
 
 // Add member
@@ -40,8 +50,9 @@ router.post("/:groupId/members", authMiddleware, async (req: AuthRequest, res) =
 
   if (!userId) return res.status(400).json({ error: "Missing userId" });
 
-  const group = await prisma.groupMember.create({
+  const groupMember = await prisma.groupMember.create({
     data: { userId, groupId, role: "member" },
+    include: { user: true },
   });
 
   // Criar notificação para o usuário convidado (agora inclui o ID do grupo)
@@ -53,7 +64,13 @@ router.post("/:groupId/members", authMiddleware, async (req: AuthRequest, res) =
     },
   });
 
-  res.json(group);
+  // Remove password from user object
+  const groupMemberWithoutPassword = {
+    ...groupMember,
+    user: groupMember.user ? (({ password, ...rest }) => rest)(groupMember.user) : null
+  };
+
+  res.json(groupMemberWithoutPassword);
 });
 
 // Remove member
