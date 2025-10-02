@@ -1,8 +1,19 @@
+
 import { Link, useNavigate } from "react-router-dom";
+import jwt_decode from "jwt-decode";
 
 export default function Navbar() {
   const navigate = useNavigate();
+
   const token = localStorage.getItem("token");
+  let user: { role?: string } | null = null;
+  if (token) {
+    try {
+      user = jwt_decode(token);
+    } catch (e) {
+      user = null;
+    }
+  }
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -19,9 +30,8 @@ export default function Navbar() {
           <>
             <Link to="/groups">Groups</Link>
             <Link to="/notifications">Notifications</Link>
-            <Link to="/groups/1/settlements">Quem deve para quem</Link>
-            <Link to="/groups/1/pay">Quitar dívida</Link>
-            <Link to="/users">Usuários</Link>
+            {/* Show 'Usuários' only for Admins */}
+            {user?.role === 'ADMIN' && <Link to="/users">Usuários</Link>}
           </>
         )}
       </div>

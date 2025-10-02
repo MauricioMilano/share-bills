@@ -12,9 +12,6 @@ dist
 # Env files
 .env
 
-# Ignore everything in prisma except schema
-prisma/*
-!prisma/schema.prisma
 
 # ✅ Allow committing SQLite database file
 dev.db

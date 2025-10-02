@@ -6,6 +6,7 @@ interface User {
   id: string;
   name: string;
   email: string;
+  role?: string;
 }
 
 export default function Users() {
@@ -31,6 +32,7 @@ export default function Users() {
         {users.map((u) => (
           <li key={u.id} className="p-4 bg-white shadow rounded">
             <span className="font-semibold">{u.name}</span> ({u.email})
+            {u.role && <span className="ml-2 text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded">{u.role}</span>}
           </li>
         ))}
       </ul>

@@ -132,18 +132,6 @@ export default function GroupDetails() {
       />
       <ExpensesList expenses={expenses} members={members} />
       <ExpenseReport settlements={settlements} />
-      <button
-        className="mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
-        onClick={async () => {
-          if (!token) return;
-          await axios.post(`/api/expenses/${id}/settle`, {}, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          fetchExpenses();
-        }}
-      >
-        Quitar dívidas
-      </button>
       <GroupMembers members={members} onRemove={removeMember} />
       <button
         className="bg-green-600 text-white px-4 py-2 rounded mb-4"
