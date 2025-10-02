@@ -15,7 +15,7 @@ router.post("/", authMiddleware, async (req: AuthRequest, res) => {
       name,
       description,
       members: {
-        create: [{ userId: req.userId!, role: "admin" }],
+        create: [{ userId: req.userId!, role: "admin", status: "ACCEPTED" }],
       },
     },
     include: { members: true },

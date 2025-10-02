@@ -13,4 +13,4 @@ services:
     ports:
       - "4000:4000"
     volumes:
-      - ./dev.db:/app/dev.db
+      - ./dev.db:/app/prisma/dev.db
