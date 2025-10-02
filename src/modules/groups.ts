@@ -101,6 +101,14 @@ router.post("/:groupId/accept", authMiddleware, async (req: AuthRequest, res) =>
         message: { contains: `||${groupId}` },
       },
     });
+    // Add notification for joining the group
+    const group = await prisma.group.findUnique({ where: { id: groupId } });
+    await prisma.notification.create({
+      data: {
+        userId,
+        message: `Você entrou no Grupo ${group?.name}`,
+      },
+    });
     res.json({ message: "Convite aceito!" });
   } catch (e) {
     res.status(500).json({ error: "Erro ao aceitar convite" });
