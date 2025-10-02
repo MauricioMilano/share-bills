@@ -206,7 +206,7 @@ export default function GroupDetails() {
           <label className="font-semibold">Quem pagou?</label>
           <select value={paidById} onChange={e => setPaidById(e.target.value)} className="border p-2 rounded">
             <option value="">Selecione</option>
-            {members.map(m => (
+            {members.filter(m => m.status !== "PENDING").map(m => (
               <option key={m.userId} value={m.userId}>
                 {m.user?.name || m.userId}
               </option>
@@ -224,7 +224,7 @@ export default function GroupDetails() {
         <div className="flex flex-col gap-1">
           <label className="font-semibold">Select members:</label>
           <div className="flex flex-wrap gap-2">
-            {members.map(m => (
+            {members.filter(m => m.status !== "PENDING").map(m => (
               <label key={m.userId} className="flex items-center gap-1">
                 <input
                   type="checkbox"
@@ -338,8 +338,7 @@ export default function GroupDetails() {
       </form>
       {memberMsg && <p className="mb-2 text-blue-600">{memberMsg}</p>}
       <ul className="space-y-2 mb-6">
-        {members.map((m) =>
-         (
+        {members.map((m) => (
           <li
             key={m.id}
             className="p-4 bg-white shadow rounded flex justify-between items-center"
@@ -347,7 +346,7 @@ export default function GroupDetails() {
             <div>
               <span className="font-semibold">{m.user ? m.user.name : "Usuário desconhecido"}</span> ({m.user ? m.user.email : "sem email"})
               <span className="ml-2 text-xs text-gray-500">
-                [{m.role}] [{m.status}]
+                [{m.role}] {m.status === "PENDING" ? <span className="text-yellow-600">[PENDING]</span> : null}
               </span>
             </div>
             <button

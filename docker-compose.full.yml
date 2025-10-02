@@ -6,11 +6,11 @@ services:
         VITE_API_URL: "http://app:4000"
     restart: always
     environment:
-      DATABASE_URL: "file:./dev.db"
+      DATABASE_URL: "file:./prisma/dev.db"
       JWT_SECRET: supersecretkey
       PORT: 4000
       HOST: 0.0.0.0
     ports:
       - "4000:4000"
     volumes:
-      - ./dev.db:/app/prisma/dev.db
+      - ./prisma/dev.db:/app/prisma/dev.db
