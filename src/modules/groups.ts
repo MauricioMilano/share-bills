@@ -94,6 +94,13 @@ router.post("/:groupId/accept", authMiddleware, async (req: AuthRequest, res) =>
       where: { id: member.id },
       data: { status: "ACCEPTED" },
     });
+    // Remove notification for this group invite
+    await prisma.notification.deleteMany({
+      where: {
+        userId,
+        message: { contains: `||${groupId}` },
+      },
+    });
     res.json({ message: "Convite aceito!" });
   } catch (e) {
     res.status(500).json({ error: "Erro ao aceitar convite" });
@@ -110,6 +117,13 @@ router.post("/:groupId/reject", authMiddleware, async (req: AuthRequest, res) =>
     });
     if (!member) return res.status(404).json({ error: "Convite não encontrado ou já respondido." });
     await prisma.groupMember.delete({ where: { id: member.id } });
+    // Remove notification for this group invite
+    await prisma.notification.deleteMany({
+      where: {
+        userId,
+        message: { contains: `||${groupId}` },
+      },
+    });
     res.json({ message: "Convite recusado!" });
   } catch (e) {
     res.status(500).json({ error: "Erro ao recusar convite" });
