@@ -1,3 +1,14 @@
+model Payment {
+  id        String   @id @default(uuid())
+  groupId   String
+  fromId    String
+  toId      String
+  amount    Float
+  createdAt DateTime @default(now())
+  group     Group    @relation(fields: [groupId], references: [id])
+  from      User     @relation("PaymentFrom", fields: [fromId], references: [id])
+  to        User     @relation("PaymentTo", fields: [toId], references: [id])
+}
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
@@ -17,6 +28,8 @@ model User {
   expenses       Expense[]       @relation("UserExpenses")
   splits         ExpenseSplit[]  @relation("UserSplits")
   notifications  Notification[]  @relation("UserNotifications")
+  paymentsFrom   Payment[]       @relation("PaymentFrom")
+  paymentsTo     Payment[]       @relation("PaymentTo")
   createdAt      DateTime        @default(now())
 }
 
@@ -26,6 +39,7 @@ model Group {
   description String?
   members     GroupMember[]
   expenses    Expense[]
+  payments    Payment[]
   createdAt   DateTime      @default(now())
 }
 

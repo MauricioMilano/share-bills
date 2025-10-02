@@ -87,15 +87,26 @@ export default function GroupDetails() {
 
 
 
+  const [formError, setFormError] = useState<string>("");
   const addExpense = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError("");
     if (!token) return;
     // Prepare splits array
     let splits: any[] = [];
     if (splitMethod === 'equal') {
       splits = selectedMembers.map(userId => ({ userId }));
     } else {
-      splits = selectedMembers.map(userId => ({ userId, value: splitValues[userId] || 0 }));
+      // Always send value for each selected user
+      splits = selectedMembers.map(userId => ({ userId, value: splitValues[userId] ?? 0 }));
+      // Validation for percentage
+      if (splitMethod === 'percentage') {
+        const totalPercent = selectedMembers.reduce((acc, userId) => acc + (Number(splitValues[userId]) || 0), 0);
+        if (totalPercent !== 100) {
+          setFormError('A soma das porcentagens deve ser 100%.');
+          return;
+        }
+      }
     }
     await axios.post(
       "/api/expenses",
@@ -152,6 +163,7 @@ export default function GroupDetails() {
       <h1 className="text-2xl font-bold mb-4">Group Details</h1>
 
       <form onSubmit={addExpense} className="mb-6 flex flex-col gap-2 max-w-xl">
+        {formError && <div className="text-red-600 font-semibold">{formError}</div>}
         <div className="flex gap-2">
           <input
             type="text"
@@ -265,7 +277,13 @@ export default function GroupDetails() {
       </ul>
       <button
         className="mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
-        onClick={() => alert('Funcionalidade de quitar dívidas em breve!')}
+        onClick={async () => {
+          if (!token) return;
+          await axios.post(`/api/expenses/${id}/settle`, {}, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          fetchExpenses();
+        }}
       >
         Quitar dívidas
       </button>
