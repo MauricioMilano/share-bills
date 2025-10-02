@@ -21,7 +21,7 @@ export default function Settlements() {
       .get(`/api/groups/${groupId}/settlements`, {
         headers: { Authorization: `Bearer ${token}` },
       })
-      .then((res) => setSettlements(res.data));
+      .then((res) => setSettlements(Array.isArray(res.data) ? res.data : res.data.settlements || []));
   }, [groupId, token]);
 
   return (

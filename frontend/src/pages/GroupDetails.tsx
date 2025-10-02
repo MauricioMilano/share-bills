@@ -56,6 +56,7 @@ export default function GroupDetails() {
       headers: { Authorization: `Bearer ${token}` },
     });
     const group = res.data.find((g: any) => g.id === id);
+    console.log("Group members:", group?.members);
     setMembers(group?.members || []);
   };
 
@@ -69,6 +70,12 @@ export default function GroupDetails() {
         .then((res) => setUsers(res.data));
     }
   }, []);
+
+  useEffect(() => {
+    console.log("Users:", users);
+  },[users])
+
+
 
   const addExpense = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -188,7 +195,8 @@ export default function GroupDetails() {
       </form>
       {memberMsg && <p className="mb-2 text-blue-600">{memberMsg}</p>}
       <ul className="space-y-2 mb-6">
-        {members.map((m) => (
+        {members.map((m) =>
+         (
           <li
             key={m.id}
             className="p-4 bg-white shadow rounded flex justify-between items-center"

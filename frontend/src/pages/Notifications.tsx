@@ -49,6 +49,23 @@ export default function Notifications() {
     }
   };
 
+  const rejectInvite = async (groupId: string) => {
+    if (!token) return;
+    try {
+      await axios.post(
+        `/api/groups/${groupId}/reject`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setAcceptMsg("Convite recusado!");
+      fetchNotifications();
+    } catch (err: any) {
+      setAcceptMsg(err.response?.data?.error || "Erro ao recusar convite");
+    }
+  };
+
   useEffect(() => {
     fetchNotifications();
   }, []);
@@ -70,19 +87,32 @@ export default function Notifications() {
             </p>
             {/* Se for convite de grupo, mostrar botão de aceitar */}
             {n.message.startsWith("Você foi convidado para o grupo: ") && !n.read && (
-              <button
-                onClick={() => {
-                  // Extrair o nome e o ID do grupo da mensagem
-                  const match = n.message.match(
-                    /^Você foi convidado para o grupo: (.*)\|\|(.*)$/
-                  );
-                  const groupId = match ? match[2] : null;
-                  if (groupId) acceptInvite(groupId);
-                }}
-                className="mt-2 px-3 py-1 bg-green-500 text-white rounded"
-              >
-                Aceitar convite
-              </button>
+              <>
+                <button
+                  onClick={() => {
+                    const match = n.message.match(
+                      /^Você foi convidado para o grupo: (.*)\|\|(.*)$/
+                    );
+                    const groupId = match ? match[2] : null;
+                    if (groupId) acceptInvite(groupId);
+                  }}
+                  className="mt-2 px-3 py-1 bg-green-500 text-white rounded"
+                >
+                  Aceitar convite
+                </button>
+                <button
+                  onClick={() => {
+                    const match = n.message.match(
+                      /^Você foi convidado para o grupo: (.*)\|\|(.*)$/
+                    );
+                    const groupId = match ? match[2] : null;
+                    if (groupId) rejectInvite(groupId);
+                  }}
+                  className="mt-2 px-3 py-1 bg-red-500 text-white rounded ml-2"
+                >
+                  Recusar convite
+                </button>
+              </>
             )}
             {!n.read && (
               <button

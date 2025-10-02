@@ -83,4 +83,20 @@ router.post("/:groupId/accept", authMiddleware, async (req: AuthRequest, res) =>
   }
 });
 
+// Recusar convite para grupo
+router.post("/:groupId/reject", authMiddleware, async (req: AuthRequest, res) => {
+  const { groupId } = req.params;
+  const userId = req.userId!;
+  try {
+    const member = await prisma.groupMember.findFirst({
+      where: { groupId, userId, status: "PENDING" },
+    });
+    if (!member) return res.status(404).json({ error: "Convite não encontrado ou já respondido." });
+    await prisma.groupMember.delete({ where: { id: member.id } });
+    res.json({ message: "Convite recusado!" });
+  } catch (e) {
+    res.status(500).json({ error: "Erro ao recusar convite" });
+  }
+});
+
 export default router;
