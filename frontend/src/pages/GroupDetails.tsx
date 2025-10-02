@@ -88,44 +88,66 @@ export default function GroupDetails() {
 
 
   const [formError, setFormError] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Validação do formulário
+  const validateExpense = () => {
+    if (!description.trim()) return "A descrição é obrigatória.";
+    if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) return "O valor deve ser maior que zero.";
+    if (!paidById) return "Selecione quem pagou.";
+    if (selectedMembers.length === 0) return "Selecione pelo menos um membro para dividir.";
+    if (splitMethod === 'percentage') {
+      const totalPercent = selectedMembers.reduce((acc, userId) => acc + (Number(splitValues[userId]) || 0), 0);
+      if (totalPercent !== 100) return "A soma das porcentagens deve ser 100%.";
+    }
+    if (splitMethod === 'times') {
+      if (selectedMembers.some(userId => !splitValues[userId] || splitValues[userId] <= 0)) {
+        return "Todos os valores devem ser maiores que zero.";
+      }
+    }
+    return "";
+  };
   const addExpense = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError("");
     if (!token) return;
-    // Prepare splits array
-    let splits: any[] = [];
-    if (splitMethod === 'equal') {
-      splits = selectedMembers.map(userId => ({ userId }));
-    } else {
-      // Always send value for each selected user
-      splits = selectedMembers.map(userId => ({ userId, value: splitValues[userId] ?? 0 }));
-      // Validation for percentage
-      if (splitMethod === 'percentage') {
-        const totalPercent = selectedMembers.reduce((acc, userId) => acc + (Number(splitValues[userId]) || 0), 0);
-        if (totalPercent !== 100) {
-          setFormError('A soma das porcentagens deve ser 100%.');
-          return;
-        }
-      }
+    const validationMsg = validateExpense();
+    if (validationMsg) {
+      setFormError(validationMsg);
+      return;
     }
-    await axios.post(
-      "/api/expenses",
-      {
-        groupId: id,
-        description,
-        amount: parseFloat(amount),
-        splits,
-        splitMethod,
-        paidById: paidById || undefined,
-      },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    setDescription("");
-    setAmount("");
-    setSelectedMembers([]);
-    setSplitValues({});
-    setPaidById("");
-    fetchExpenses();
+    setIsSubmitting(true);
+    try {
+      // Prepare splits array
+      let splits: any[] = [];
+      if (splitMethod === 'equal') {
+        splits = selectedMembers.map(userId => ({ userId }));
+      } else {
+        splits = selectedMembers.map(userId => ({ userId, value: splitValues[userId] ?? 0 }));
+      }
+      await axios.post(
+        "/api/expenses",
+        {
+          groupId: id,
+          description,
+          amount: parseFloat(amount),
+          splits,
+          splitMethod,
+          paidById: paidById || undefined,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setDescription("");
+      setAmount("");
+      setSelectedMembers([]);
+      setSplitValues({});
+      setPaidById("");
+      fetchExpenses();
+    } catch (err: any) {
+      setFormError(err.response?.data?.error || "Erro ao adicionar despesa.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const inviteMember = async (e: React.FormEvent) => {
@@ -239,9 +261,14 @@ export default function GroupDetails() {
         )}
         <button
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded self-start"
+          className={`px-4 py-2 rounded self-start text-white 
+            ${!!validateExpense() || isSubmitting
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-blue-500 hover:bg-blue-600'}
+          `}
+          disabled={!!validateExpense() || isSubmitting}
         >
-          Add Expense
+          {isSubmitting ? 'Adicionando...' : 'Adicionar despesa'}
         </button>
       </form>
 
