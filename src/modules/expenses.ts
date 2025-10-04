@@ -14,7 +14,7 @@ router.post('/:groupId/settle', authMiddleware, async (req: AuthRequest, res) =>
     where: { groupId },
     include: { user: true },
   });
-  const userMap = Object.fromEntries(groupMembers.map((m: any) => [m.userId, m.user]));
+  const userMap = Object.fromEntries(groupMembers.map((m: { userId: string; user: any }) => [m.userId, m.user]));
 
   // Get balances (excluding already settled payments)
   const expenses = await prisma.expense.findMany({
