@@ -1,6 +1,6 @@
 
 import { Link, useNavigate } from "react-router-dom";
-import jwt_decode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -9,7 +9,7 @@ export default function Navbar() {
   let user: { role?: string } | null = null;
   if (token) {
     try {
-      user = jwt_decode(token);
+      user = jwtDecode(token);
     } catch (e) {
       user = null;
     }
