@@ -6,8 +6,9 @@ logs
 *.log
 
 # Build outputs
-dist
-!frontend/dist
+dist/
+frontend/dist/
+
 
 # Env files
 .env
