@@ -14,7 +14,7 @@ router.post('/:groupId/settle', authMiddleware, async (req: AuthRequest, res) =>
     where: { groupId },
     include: { user: true },
   });
-  const userMap = Object.fromEntries(groupMembers.map(m => [m.userId, m.user]));
+  const userMap = Object.fromEntries(groupMembers.map((m: any) => [m.userId, m.user]));
 
   // Get balances (excluding already settled payments)
   const expenses = await prisma.expense.findMany({
@@ -37,8 +37,8 @@ router.post('/:groupId/settle', authMiddleware, async (req: AuthRequest, res) =>
   }
 
   // Prepare creditors and debtors
-  let creditors = Object.entries(balances).filter(([_, v]) => v > 0).map(([userId, amount]) => ({ userId, amount }));
-  let debtors = Object.entries(balances).filter(([_, v]) => v < 0).map(([userId, amount]) => ({ userId, amount: -amount }));
+  let creditors = Object.entries(balances).filter(([_, v]) => v > 0).map(([userId, amount]: [string, number]) => ({ userId, amount }));
+  let debtors = Object.entries(balances).filter(([_, v]) => v < 0).map(([userId, amount]: [string, number]) => ({ userId, amount: -amount }));
 
   // Greedy settlement
   const settlements: { from: string, to: string, amount: number }[] = [];
@@ -81,7 +81,7 @@ router.post('/:groupId/settle', authMiddleware, async (req: AuthRequest, res) =>
     where: { groupId },
     include: { user: true },
   });
-  const userMap = Object.fromEntries(groupMembers.map(m => [m.userId, m.user]));
+  const userMap = Object.fromEntries(groupMembers.map((m: any) => [m.userId, m.user]));
 
   // Get balances (excluding already settled payments)
   const expenses = await prisma.expense.findMany({
@@ -104,8 +104,8 @@ router.post('/:groupId/settle', authMiddleware, async (req: AuthRequest, res) =>
   }
 
   // Prepare creditors and debtors
-  let creditors = Object.entries(balances).filter(([_, v]) => v > 0).map(([userId, amount]) => ({ userId, amount }));
-  let debtors = Object.entries(balances).filter(([_, v]) => v < 0).map(([userId, amount]) => ({ userId, amount: -amount }));
+  let creditors = Object.entries(balances).filter(([_, v]) => v > 0).map(([userId, amount]: [string, number]) => ({ userId, amount }));
+  let debtors = Object.entries(balances).filter(([_, v]) => v < 0).map(([userId, amount]: [string, number]) => ({ userId, amount: -amount }));
 
   // Greedy settlement
   const settlements: { from: string, to: string, amount: number }[] = [];

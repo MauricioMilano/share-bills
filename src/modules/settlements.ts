@@ -68,7 +68,7 @@ router.get("/groups/:id/settlements", authMiddleware, async (req, res) => {
       select: { id: true, name: true, email: true },
     });
 
-    const userMap = Object.fromEntries(users.map((u) => [u.id, u]));
+  const userMap = Object.fromEntries(users.map((u: { id: string; name: string; email: string }) => [u.id, u]));
 
     const result = settlements.map((s) => ({
       from: userMap[s.from]?.name || s.from,

@@ -32,9 +32,9 @@ router.get("/", authMiddleware, async (req: AuthRequest, res) => {
   });
 
   // Remove password from user objects
-  const groupsWithoutPassword = groups.map(group => ({
+  const groupsWithoutPassword = groups.map((group: any) => ({
     ...group,
-    members: group.members.map(member => ({
+    members: group.members.map((member: any) => ({
       ...member,
       user: member.user ? (({ password, ...rest }) => rest)(member.user) : null
     }))
@@ -67,7 +67,7 @@ router.post("/:groupId/members", authMiddleware, async (req: AuthRequest, res) =
   // Remove password from user object
   const groupMemberWithoutPassword = {
     ...groupMember,
-    user: groupMember.user ? (({ password, ...rest }) => rest)(groupMember.user) : null
+    user: groupMember.user ? (({ password, ...rest }: any) => rest)(groupMember.user) : null
   };
 
   res.json(groupMemberWithoutPassword);

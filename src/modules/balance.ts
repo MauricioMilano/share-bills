@@ -41,7 +41,7 @@ router.get("/groups/:id/balance", authMiddleware, async (req, res) => {
       select: { id: true, name: true, email: true },
     });
 
-    const result = users.map((u) => ({
+  const result = users.map((u: { id: string; name: string; email: string }) => ({
       id: u.id,
       name: u.name,
       email: u.email,
