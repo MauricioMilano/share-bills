@@ -251,7 +251,7 @@ router.get('/:groupId/settlements', authMiddleware, async (req: AuthRequest, res
     where: { groupId },
     include: { user: true },
   });
-  const userMap = Object.fromEntries(groupMembers.map(m => [m.userId, m.user]));
+  const userMap = Object.fromEntries(groupMembers.map((m: any) => [m.userId, m.user]));
 
   // Get balances
   const expenses = await prisma.expense.findMany({
